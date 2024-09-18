@@ -20,7 +20,7 @@ export async function renderMarkdown(markdown: string, plugin: ProjectsHTMLInjec
 
 			const codeElement = document.createElement('code');
 			codeElement.classList.add(`language-${language}`, 'is-loaded', 'custom-loaded');
-			codeElement.innerHTML = highlightedCode; // Assuming `highlightedCode` contains your highlighted code
+			codeElement.innerHTML = highlightedCode;
 
 			const copyButton = document.createElement('button');
 			copyButton.classList.add('copy-code-button', 'custom-copy-btn');
@@ -32,7 +32,6 @@ export async function renderMarkdown(markdown: string, plugin: ProjectsHTMLInjec
 			codeContainer.appendChild(preElement);
 
 			return codeContainer.outerHTML;
-			//return `<div class="code-container"><pre class="language-${language} custom-pre" tabindex="0"><code class="language-${language} is-loaded custom-loaded">${highlightedCode}</code><button class="copy-code-button custom-copy-btn">Copy</button></pre></div>`; //style="position: absolute; top: 10px; right: 10px;"
 		},
 		listitem: (token: Tokens.ListItem): string => {
 			const text = marked.parseInline(token.text);
@@ -66,6 +65,7 @@ export async function renderMarkdown(markdown: string, plugin: ProjectsHTMLInjec
 		},
 	};
 
+	// ISSUE WITH THIS
 	/**
 	 * Sanitize html to avoid  XSS attacks.
 	 * @param html string containing the html
@@ -74,7 +74,6 @@ export async function renderMarkdown(markdown: string, plugin: ProjectsHTMLInjec
 	//const postprocess = (html: string) => {
 	//	return DOMPurify.sanitize(html);
 	//}
-
 	//marked.use({ renderer, hooks: { postprocess } }); // causing strikethrough to not occur
 	marked.use({ renderer });
 	try {
@@ -101,11 +100,9 @@ function renderToken(token: Token): string {
 						(tok: Token) => renderToken(tok)
 					).join('')}</${listType}>`;
 			case 'list_item':
-				// if (token.tokens) 
 				return `<li>${(token.tokens as any).map((tok: any) => renderToken(tok)).join('')}</li>`;
 			case 'paragraph':
 				return `<p>${(token.tokens as any).map((tok: any) => renderToken(tok)).join('')}</p>`;
-			// Add more cases for different token types as needed
 			default:
 				return token.raw || '';
 		}
